@@ -60,7 +60,7 @@ void Route_search::convtonumber(vector<Station>* list, string src, string dst){
                     switch(j){
                     case 0: //same_src.enqueue(temp_stn.number());
                         same_src.push(temp_stn.number());
-                        source = temp_stn.number();//记录起点编号
+                        //source = temp_stn.number();//记录起点编号
                         break;
                     case 1: //same_src.enqueue(temp_stn.same1());//保存另外的线路对于那个站的编号
                         same_src.push(temp_stn.same1());
@@ -86,7 +86,7 @@ void Route_search::convtonumber(vector<Station>* list, string src, string dst){
                     switch(j){
                     case 0: //same_dst.enqueue(temp_stn.number());
                         same_dst.push(temp_stn.number());
-                        destination = temp_stn.number();
+                        //destination = temp_stn.number();
                         break;
                     case 1: //same_dst.enqueue(temp_stn.same1());
                         same_dst.push(temp_stn.same1());
@@ -165,19 +165,27 @@ void Route_search::search(Graphm* G, vector<Station>* list, string s, string d){
     //if(same_src.length() == 0 && same_dst.length() == 0){//如果起点终点都不是转乘站
     if(same_src.size() == 0 && same_dst.size() == 0){
         cout<<"source1="<<source<<endl;
+        source = same_src.front();
+        destination = same_dst.front();
+        same_src.pop();
+        same_dst.pop();
         dijkstra(G, source, false);
     }
 
     //else if(same_src.length() > 0 && same_dst.length() == 0){//起点是
     else if(same_src.size() > 0 && same_dst.size() == 0){
         cout<<"interchange source"<<endl;
+        source = same_src.front();
+        destination = same_dst.front();
+        same_src.pop();
+        same_dst.pop();
         dijkstra(G, source, false);
         //int n = same_src.length(), temp_src;
         int n = same_src.size(), temp_src;
         cout<<"n"<<n<<endl;
         int i, j;
         for(i=0; i<n; i++){
-            cout<<"i"<<i<<endl;
+            //cout<<"i"<<i<<endl;
             //temp_src = same_src.dequeue();//从这个站另一条线出发
             temp_src = same_src.front();
             same_src.pop();
@@ -198,6 +206,10 @@ void Route_search::search(Graphm* G, vector<Station>* list, string s, string d){
     //else if(same_src.length() == 0 && same_dst.length() > 0){//终点是
     else if(same_src.size() == 0 && same_dst.size() > 0){
         //cout<<"intechange destination"<<endl;
+        source = same_src.front();
+        destination = same_dst.front();
+        same_src.pop();
+        same_dst.pop();
         dijkstra(G, source, false);
         //int n = same_dst.length(), temp_dst;
         int n = same_dst.size(), temp_dst;
@@ -224,6 +236,12 @@ void Route_search::search(Graphm* G, vector<Station>* list, string s, string d){
     //else if(same_src.length() > 0 && same_dst.length() > 0){//都是
     else if(same_src.size() > 0 && same_dst.size() > 0){
         //cout<<"both interchanges"<<endl;
+        source = same_src.front();
+        destination = same_dst.front();
+        same_src.pop();
+        same_dst.pop();
+        same_src.push(source);
+        same_dst.push(destination);
         dijkstra(G, source, false);
         //int src_count = same_src.length(), dst_count = same_dst.length(),
                 //temp_src, temp_dst;
@@ -255,6 +273,7 @@ void Route_search::search(Graphm* G, vector<Station>* list, string s, string d){
 }
 
 void Route_search::printdistance(){
+    cout<<"source"<<source<<endl;
     cout<<"destination"<<destination<<endl;
     cout << D[destination] << endl;
 }
@@ -276,7 +295,7 @@ void Route_search::printroute(vector<Station>* list){
         prev = F[prev];
         i++;
     }while(prev != source);
-    rt.push(F[prev]);
+    rt.push(prev);
 
     //cout<<"push times"<<rt.length()<<endl;
     //while(rt.length() > 0){
